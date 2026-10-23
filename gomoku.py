@@ -10,20 +10,48 @@ Author(s): Michael Guerzhoy with tests contributed by Siavash Kazemian.  Last mo
 """
 
 def is_empty(board):
+    '''This function returns True iff there are no stones on the board board'''
     pass
     
 def is_bounded(board, y_end, x_end, length, d_y, d_x):
+    '''This function analyses the sequence of length length that ends at location (y_end,
+x_end). The function returns "OPEN" if the sequence is open, "SEMIOPEN" if the sequence
+if semi-open, and "CLOSED" if the sequence is closed.
+Assume that the sequence is complete (i.e., you are not just given a subsequence) and valid, and
+contains stones of only one colour.'''
     pass
     
 def detect_row(board, col, y_start, x_start, length, d_y, d_x):
+    '''This function analyses the row (let’s call it R) of squares that starts at the location
+(y_start,x_start) and goes in the direction (d_y,d_x). Note that this use of the word
+row is different from “a row in a table”. Here the word row means a sequence of squares, which
+are adjacent either horizontally, or vertically, or diagonally. The function returns a tuple whose
+first element is the number of open sequences of colour col of length length in the row R 
+and whose second element is the number of semi-open sequences of colour col of length
+length in the row R
+Assume that (y_start,x_start) is located on the edge of the board. Only complete
+sequences count. For example, column 1 in Fig. 1 is considered to contain one open row of
+length 3, and no other rows.'''
     return open_seq_count, semi_open_seq_count
     
 def detect_rows(board, col, length):
-    ####CHANGE ME
+    '''This function analyses the board board. The function returns a tuple, whose first element is the
+number of open sequences of colour col of length length on the entire board, and whose
+second element is the number of semi-open sequences of colour col of length length on the
+entire board.
+Only complete sequences count. For example, Fig. 1 is considered to contain one open row of
+length 3, and no other rows.
+Assume length is an integer greater or equal to 2.'''
     open_seq_count, semi_open_seq_count = 0, 0
     return open_seq_count, semi_open_seq_count
     
 def search_max(board):
+    '''This function uses the function score() (provided) to find the optimal move for black. It finds
+the location (y,x), such that (y,x) is empty and putting a black stone on (y,x) maximizes
+the score of the board as calculated by score(). The function returns a tuple (y, x) such
+that putting a black stone in coordinates (y, x) maximizes the potential score (if there are
+several such tuples, you can return any one of them). After the function returns, the contents of
+board must remain the same.'''
     return move_y, move_x
     
 def score(board):
@@ -55,6 +83,9 @@ def score(board):
             open_b[2] + semi_open_b[2] - open_w[2] - semi_open_w[2])
     
 def is_win(board):
+    '''This function determines the current status of the game, and returns one of ["White won",
+"Black won", "Draw", "Continue playing"], depending on the current status on
+the board. The only situation where "Draw" is returned is when board is full.'''
     pass
 
 def print_board(board):
