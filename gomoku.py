@@ -9,6 +9,14 @@ This is a placeholder that you should remove once you modify the function.
 Author(s): Michael Guerzhoy with tests contributed by Siavash Kazemian.  Last modified: Oct. 19, 2026
 """
 
+'''
+1. no global variables
+2. d_y, d_x represent direction of sequences, and both could only take on 0 or 1
+3. coordinate (y, x) means board[y][x]
+4. open sequence: a stone can be put on both ends
+   closed sequence: no stone could be put on either end
+   semi_open: not open nor closed'''
+
 def is_empty(board):
     '''This function returns True iff there are no stones on the board board'''
     pass
