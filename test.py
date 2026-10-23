@@ -1,3 +1,5 @@
+import gomoku
+
 def test_is_empty():
     board  = make_empty_board(8)
     if is_empty(board):
