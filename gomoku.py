@@ -19,7 +19,11 @@ Author(s): Michael Guerzhoy with tests contributed by Siavash Kazemian.  Last mo
 
 def is_empty(board):
     '''This function returns True iff there are no stones on the board board'''
-    pass
+    for i in range(len(board)):
+        for j in range(len(board[i])):
+            if board [i][j] != " ":
+                return False
+    return True
     
 def is_bounded(board, y_end, x_end, length, d_y, d_x):
     '''This function analyses the sequence of length length that ends at location (y_end,
