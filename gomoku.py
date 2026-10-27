@@ -31,7 +31,109 @@ x_end). The function returns "OPEN" if the sequence is open, "SEMIOPEN" if the s
 if semi-open, and "CLOSED" if the sequence is closed.
 Assume that the sequence is complete (i.e., you are not just given a subsequence) and valid, and
 contains stones of only one colour.'''
-    pass
+    color = board[y_end][x_end]
+    if color == "w":
+        opp_color = "b"
+    else:
+        opp_color = "w"
+
+    if d_y == 0 and d_x == 1: #left to right
+        left_position_empty = False
+        right_position_empty = False
+        #check left
+        if x_end - length >= 0:
+            if board[y_end][x_end - length] == " ":
+                left_position_empty = True
+            elif board[y_end][x_end - length] == opp_color:
+                left_position_empty = False
+
+        #check right
+        if x_end + 1 >= len(board[0]):
+            right_position_empty = False
+        elif board[y_end][x_end + 1] == opp_color:
+            right_position_empty = False
+        elif board[y_end][x_end + 1] == " ":
+            right_position_empty = True
+
+        if right_position_empty and left_position_empty:
+            return "OPEN"
+        elif not right_position_empty and not left_position_empty:
+            return "CLOSED"
+        else:
+            return "SEMIOPEN"
+
+    if d_y == 1 and d_x == 0: #top to bottom
+        top_position_empty = False
+        bottom_position_empty = False
+        #check top
+        if y_end - length >= 0:
+            if board[y_end - length][x_end] == " ":
+                top_position_empty = True
+            elif board[y_end - length][x_end] == opp_color:
+                top_position_empty = False
+
+        #check bottom
+        if y_end + 1 >= len(board):
+            bottom_position_empty = False
+        elif board[y_end + 1][x_end] == opp_color:
+            bottom_position_empty = False
+        elif board[y_end + 1][x_end] == " ":
+            bottom_position_empty = True
+
+        if bottom_position_empty and top_position_empty:
+            return "OPEN"
+        elif not bottom_position_empty and not top_position_empty:
+            return "CLOSED"
+        else:
+            return "SEMIOPEN"
+
+    if d_y == 1 and d_x == 1: #upper left to lower right
+        upper_left_empty = False
+        lower_right_empty = False
+        #check upper left
+        if y_end - length >= 0 and x_end - length >= 0:
+            if board[y_end - length][x_end - length] == " ":
+                upper_left_empty = True
+            elif board[y_end - length][x_end - length] == opp_color:
+                upper_left_empty = False
+        #check lower right
+        if y_end + 1 >= len(board) or x_end + 1 >= len(board[0]):
+            lower_right_empty = False
+        elif board[y_end + 1][x_end + 1] == opp_color:
+            lower_right_empty = False
+        elif board[y_end + 1][x_end + 1] == " ":
+            lower_right_empty = True
+
+        if upper_left_empty and lower_right_empty:
+            return "OPEN"
+        elif not upper_left_empty and not lower_right_empty:
+            return "CLOSED"
+        else:
+            return "SEMIOPEN"
+
+    if d_y == 1 and d_x == -1: #upper right to lower left
+        upper_right_empty = False
+        lower_left_empty = False
+        #check upper right
+        if y_end - length >= 0 and x_end + length < len(board[0]):
+            if board[y_end - length][x_end + length] == " ":
+                upper_right_empty = True
+            elif board[y_end - length][x_end + length] == opp_color:
+                upper_right_empty = False
+        #check lower right
+        if y_end + 1 >= len(board) or x_end - 1 < 0:
+            lower_left_empty = False
+        elif board[y_end + 1][x_end - 1] == opp_color:
+            lower_left_empty = False
+        elif board[y_end + 1][x_end - 1] == " ":
+            lower_left_empty = True
+
+        if upper_right_empty and lower_left_empty:
+            return "OPEN"
+        elif not upper_right_empty and not lower_left_empty:
+            return "CLOSED"
+        else:
+            return "SEMIOPEN"
     
 def detect_row(board, col, y_start, x_start, length, d_y, d_x):
     '''This function analyses the row (let’s call it R) of squares that starts at the location
