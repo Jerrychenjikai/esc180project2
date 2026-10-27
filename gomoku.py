@@ -136,6 +136,7 @@ contains stones of only one colour.'''
             return "SEMIOPEN"
     
 def detect_row(board, col, y_start, x_start, length, d_y, d_x):
+   
     '''This function analyses the row (let’s call it R) of squares that starts at the location
 (y_start,x_start) and goes in the direction (d_y,d_x). Note that this use of the word
 row is different from “a row in a table”. Here the word row means a sequence of squares, which
@@ -146,6 +147,50 @@ length in the row R
 Assume that (y_start,x_start) is located on the edge of the board. Only complete
 sequences count. For example, column 1 in Fig. 1 is considered to contain one open row of
 length 3, and no other rows.'''
+    open_seq_count = 0
+    semi_open_seq_count = 0
+
+    col_position = []
+
+    y = y_start
+    x = x_start
+
+    # Collect positions of stones with the specified color
+    while 0 <= y < len(board) and 0 <= x < len(board[0]):
+
+        if board[y][x] == col:
+            col_position.append([y, x])
+
+        y += d_y
+        x += d_x
+
+    if len(col_position) == 0:
+        return open_seq_count, semi_open_seq_count
+
+    count = 1
+
+    # Count consecutive stones
+    for i in range(1, len(col_position)):
+        if (col_position[i][0] == col_position[i - 1][0] + d_y and col_position[i][1] == col_position[i - 1][1] + d_x):
+            count += 1
+        else:
+            if count == length:
+                status = is_bounded(board, col_position[i - 1][0], col_position[i - 1][1], length, d_y, d_x)
+                if status == "OPEN":
+                    open_seq_count += 1
+                elif status == "SEMIOPEN":
+                    semi_open_seq_count += 1
+
+            count = 1
+
+    # Check the last sequence
+    if count == length:
+        status = is_bounded(board, col_position[-1][0], col_position[-1][1], length, d_y, d_x)
+        if status == "OPEN":
+            open_seq_count += 1
+        elif status == "SEMIOPEN":
+            semi_open_seq_count += 1
+
     return open_seq_count, semi_open_seq_count
     
 def detect_rows(board, col, length):
