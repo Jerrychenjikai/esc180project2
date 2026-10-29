@@ -230,15 +230,21 @@ Assume length is an integer greater or equal to 2.'''
     for i in edge_points:
         for j in possible_delta:
             a = detect_row(board, col, i[0], i[1], length, j[0], j[1], True)
-            open_seq_count, semi_open_seq_count, close_seq_count += a[0], a[1], a[2]
+            open_seq_count += a[0]
+            semi_open_seq_count += a[1]
+            close_seq_count += a[2]
 
     for i in top_edge_points:
         for j in top_possible_delta:
             a = detect_row(board, col, i[0], i[1], length, j[0], j[1], True)
-            open_seq_count, semi_open_seq_count, close_seq_count += a[0], a[1], a[2]
+            open_seq_count += a[0]
+            semi_open_seq_count += a[1]
+            close_seq_count += a[2]
 
     a = detect_row(board, col, 0, 0, length, 0, 1, True)
-    open_seq_count, semi_open_seq_count, close_seq_count += a[0], a[1], a[2]
+    open_seq_count += a[0]
+    semi_open_seq_count += a[1]
+    close_seq_count += a[2]
 
     if count_close:
         return open_seq_count, semi_open_seq_count, close_seq_count
@@ -301,15 +307,9 @@ def is_win(board):
     '''This function determines the current status of the game, and returns one of ["White won",
 "Black won", "Draw", "Continue playing"], depending on the current status on
 the board. The only situation where "Draw" is returned is when board is full.'''
-    if sum(detect_rows(board, 'w', 5, True)) > 0 \
-        or sum(detect_rows(board, 'w', 6, True)) > 0 \
-        or sum(detect_rows(board, 'w', 7, True)) > 0 \
-        or sum(detect_rows(board, 'w', 8, True)) > 0:
+    if sum(detect_rows(board, 'w', 5, True)) > 0:
         return "White won"
-    if sum(detect_rows(board, 'b', 5, True)) > 0 \
-        or sum(detect_rows(board, 'b', 6, True)) > 0 \
-        or sum(detect_rows(board, 'b', 7, True)) > 0 \
-        or sum(detect_rows(board, 'b', 8, True)) > 0:
+    if sum(detect_rows(board, 'b', 5, True)) > 0:
         return "Black won"
 
     for i in board:
