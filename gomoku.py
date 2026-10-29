@@ -229,13 +229,16 @@ Assume length is an integer greater or equal to 2.'''
 
     for i in edge_points:
         for j in possible_delta:
-            open_seq_count, semi_open_seq_count, close_seq_count += detect_row(board, col, i[0], i[1], length, j[0], j[1], True)
+            a = detect_row(board, col, i[0], i[1], length, j[0], j[1], True)
+            open_seq_count, semi_open_seq_count, close_seq_count += a[0], a[1], a[2]
 
     for i in top_edge_points:
         for j in top_possible_delta:
-            open_seq_count, semi_open_seq_count, close_seq_count += detect_row(board, col, i[0], i[1], length, j[0], j[1], True)
+            a = detect_row(board, col, i[0], i[1], length, j[0], j[1], True)
+            open_seq_count, semi_open_seq_count, close_seq_count += a[0], a[1], a[2]
 
-    open_seq_count, semi_open_seq_count, close_seq_count += detect_row(board, col, 0, 0, length, 0, 1, True)
+    a = detect_row(board, col, 0, 0, length, 0, 1, True)
+    open_seq_count, semi_open_seq_count, close_seq_count += a[0], a[1], a[2]
 
     if count_close:
         return open_seq_count, semi_open_seq_count, close_seq_count
