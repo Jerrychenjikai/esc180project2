@@ -11,7 +11,7 @@ Author(s): Michael Guerzhoy with tests contributed by Siavash Kazemian.  Last mo
 
 '''
 1. no global variables
-2. d_y, d_x represent direction of sequences, and both could only take on 0 or 1
+2. d_y, d_x represent direction of sequences, and both could only take on 0 or 1 or -1
 3. coordinate (y, x) means board[y][x]
 4. open sequence: a stone can be put on both ends
    closed sequence: no stone could be put on either end
@@ -135,7 +135,7 @@ contains stones of only one colour.'''
         else:
             return "SEMIOPEN"
     
-def detect_row(board, col, y_start, x_start, length, d_y, d_x):
+def detect_row(board, col, y_start, x_start, length, d_y, d_x, count_close = False):
    
     '''This function analyses the row (let’s call it R) of squares that starts at the location
 (y_start,x_start) and goes in the direction (d_y,d_x). Note that this use of the word
@@ -149,6 +149,7 @@ sequences count. For example, column 1 in Fig. 1 is considered to contain one op
 length 3, and no other rows.'''
     open_seq_count = 0
     semi_open_seq_count = 0
+    close_seq_count = 0
 
     col_position = []
 
@@ -165,7 +166,10 @@ length 3, and no other rows.'''
         x += d_x
 
     if len(col_position) == 0:
-        return open_seq_count, semi_open_seq_count
+        if count_close:
+            return open_seq_count, semi_open_seq_count, close_seq_count
+        else:
+            return open_seq_count, semi_open_seq_count
 
     count = 1
 
@@ -180,6 +184,8 @@ length 3, and no other rows.'''
                     open_seq_count += 1
                 elif status == "SEMIOPEN":
                     semi_open_seq_count += 1
+                else:
+                    close_seq_count += 1
 
             count = 1
 
@@ -190,10 +196,15 @@ length 3, and no other rows.'''
             open_seq_count += 1
         elif status == "SEMIOPEN":
             semi_open_seq_count += 1
+        else:
+            close_seq_count += 1
 
-    return open_seq_count, semi_open_seq_count
+    if count_close:
+        return open_seq_count, semi_open_seq_count, close_seq_count
+    else:
+        return open_seq_count, semi_open_seq_count
     
-def detect_rows(board, col, length):
+def detect_rows(board, col, length, count_close = False):
     '''This function analyses the board board. The function returns a tuple, whose first element is the
 number of open sequences of colour col of length length on the entire board, and whose
 second element is the number of semi-open sequences of colour col of length length on the
@@ -201,8 +212,35 @@ entire board.
 Only complete sequences count. For example, Fig. 1 is considered to contain one open row of
 length 3, and no other rows.
 Assume length is an integer greater or equal to 2.'''
-    open_seq_count, semi_open_seq_count = 0, 0
-    return open_seq_count, semi_open_seq_count
+    if length == 1:
+        raise ValueError("length should be greater than 1")
+    
+    open_seq_count, semi_open_seq_count, close_seq_count = 0, 0, 0
+
+    top_edge_points = [[0,0]]
+    edge_points = []
+    top_possible_delta = [[1,0], [1,1], [1,-1]]
+    possible_delta = [[0,1], [1,1], [1,-1]]
+
+    for i in range(1, len(board)):
+        top_edge_points.append([0,i])
+        edge_points.append([i,len(board)-1])
+        edge_points.append([i,0])
+
+    for i in edge_points:
+        for j in possible_delta:
+            open_seq_count, semi_open_seq_count, close_seq_count += detect_row(board, col, i[0], i[1], length, j[0], j[1], True)
+
+    for i in top_edge_points:
+        for j in top_possible_delta:
+            open_seq_count, semi_open_seq_count, close_seq_count += detect_row(board, col, i[0], i[1], length, j[0], j[1], True)
+
+    open_seq_count, semi_open_seq_count, close_seq_count += detect_row(board, col, 0, 0, length, 0, 1, True)
+
+    if count_close:
+        return open_seq_count, semi_open_seq_count, close_seq_count
+    else:
+        return open_seq_count, semi_open_seq_count
     
 def search_max(board):
     '''This function uses the function score() (provided) to find the optimal move for black. It finds
@@ -211,6 +249,21 @@ the score of the board as calculated by score(). The function returns a tuple (y
 that putting a black stone in coordinates (y, x) maximizes the potential score (if there are
 several such tuples, you can return any one of them). After the function returns, the contents of
 board must remain the same.'''
+    maxx = -99999999999999
+    coord = (-1, -1)
+
+    for i in range(len(board)):
+        for j in range(len(board)):
+            if board[i][j] == ' ':
+                board[i][j] = 'b'
+                a = score(board)
+                if a>maxx:
+                    maxx = a
+                    coord = (i, j)
+                board[i][j] = ' '
+
+    return coord
+
     return move_y, move_x
     
 def score(board):
@@ -245,7 +298,23 @@ def is_win(board):
     '''This function determines the current status of the game, and returns one of ["White won",
 "Black won", "Draw", "Continue playing"], depending on the current status on
 the board. The only situation where "Draw" is returned is when board is full.'''
-    pass
+    if sum(detect_rows(board, 'w', 5, True)) > 0 \
+        or sum(detect_rows(board, 'w', 6, True)) > 0 \
+        or sum(detect_rows(board, 'w', 7, True)) > 0 \
+        or sum(detect_rows(board, 'w', 8, True)) > 0:
+        return "White won"
+    if sum(detect_rows(board, 'b', 5, True)) > 0 \
+        or sum(detect_rows(board, 'b', 6, True)) > 0 \
+        or sum(detect_rows(board, 'b', 7, True)) > 0 \
+        or sum(detect_rows(board, 'b', 8, True)) > 0:
+        return "Black won"
+
+    for i in board:
+        for j in i:
+            if j == ' ':
+                return "Continue playing"
+
+    return "Draw"
 
 def print_board(board):
     
